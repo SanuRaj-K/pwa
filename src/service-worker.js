@@ -68,5 +68,35 @@ self.addEventListener('message', (event) => {
     self.skipWaiting();
   }
 });
+const CACHE_NAME = 'Mycache';
+const urlsToCache = [
+  '/',
+  '/favicon.ico',
+  '/logo192.png',
+  '/logo512.png',
+  '/manifest.json',
+  // other assets
+];
+
+self.addEventListener('install', (event) => {
+  event.waitUntil(
+    caches.open(CACHE_NAME)
+      .then((cache) => {
+        console.log('Opened cache');
+        return cache.addAll(urlsToCache);
+      })
+  );
+});
+
+self.addEventListener('fetch', (event) => {
+  event.respondWith(
+    caches.match(event.request)
+      .then((response) => {
+        // Cache hit - return the cached response
+        return response || fetch(event.request);
+      })
+  );
+});
+
 
 // Any other custom service worker logic can go here.
