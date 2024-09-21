@@ -12,7 +12,6 @@ import { ExpirationPlugin } from 'workbox-expiration';
 import { precacheAndRoute, createHandlerBoundToURL } from 'workbox-precaching';
 import { registerRoute } from 'workbox-routing';
 import { StaleWhileRevalidate } from 'workbox-strategies';
-import { clearPostRequests, getAllPostRequests, savePostRequest } from './indexedDb';
 
 clientsClaim();
 
@@ -71,47 +70,3 @@ self.addEventListener('message', (event) => {
 });
 
 // Any other custom service worker logic can go here.
-self.addEventListener('fetch', (event) => {
-  if (event.request.method === 'POST') {
-    if (!navigator.onLine) {
-      event.respondWith(
-        (async function () {
-          const clonedRequest = event.request.clone();
-          const body = await clonedRequest.json();
-
-          // Save the request to IndexedDB
-          await savePostRequest(body);
-
-          // Return a custom response for offline usage
-          return new Response(
-            JSON.stringify({ error: 'App is offline, request stored.' }),
-            { headers: { 'Content-Type': 'application/json' } }
-          );
-        })()
-      );
-    }
-  }
-});
-
-// Listen for sync events
-self.addEventListener('sync', (event) => {
-  if (event.tag === 'sync-post-requests') {
-    event.waitUntil(
-      (async function () {
-        const requests = await getAllPostRequests();
-
-        // Send the cached requests
-        for (const request of requests) {
-          await fetch('/api/your-post-endpoint', {
-            method: 'POST',
-            body: JSON.stringify(request.data),
-            headers: { 'Content-Type': 'application/json' },
-          });
-        }
-
-        // Clear the stored requests after successful sending
-        await clearPostRequests();
-      })()
-    );
-  }
-});
