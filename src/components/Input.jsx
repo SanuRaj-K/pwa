@@ -70,8 +70,8 @@ function Input({ addedUsers, setAddedUsers }) {
               onClick={handlePost}
               style={{
                 marginLeft: "10px",
-                color:'black',
-                backgroundColor: "green",
+                color:'white',
+                backgroundColor: "red",
                 cursor: "pointer",
                 padding: " 3px 10px",
               }}
