@@ -64,27 +64,14 @@ function registerValidSW(swUrl, config) {
         installingWorker.onstatechange = () => {
           if (installingWorker.state === 'installed') {
             if (navigator.serviceWorker.controller) {
-              // At this point, the new service worker is installed.
-              console.log('New content is available; will automatically reload the page.');
+              // Log that new content is available
+              console.log('New content is available; reloading now...');
 
-              // Option 1: Reload the page automatically.
+              // Post message to skip waiting and activate new service worker
+              installingWorker.postMessage({ action: 'skipWaiting' });
+
+              // Reload the page to apply new content immediately
               window.location.reload();
-
-              // Option 2: If you want to prompt the user instead, use this:
-              // toast('New content available! Refresh to update.', {
-              //   onClick: () => window.location.reload(),
-              // });
-            } else {
-              // At this point, everything has been precached.
-              console.log('Content is cached for offline use.');
-            }
-
-            // Skip waiting to immediately activate the new service worker
-            installingWorker.postMessage({ action: 'skipWaiting' });
-
-            // Optionally, execute callback for onSuccess (if provided)
-            if (config && config.onSuccess) {
-              config.onSuccess(registration);
             }
           }
         };
@@ -94,6 +81,7 @@ function registerValidSW(swUrl, config) {
       console.error('Error during service worker registration:', error);
     });
 }
+
 
 // Force an update of the service worker (optional utility function)
 export function forceSWupdate() {

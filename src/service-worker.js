@@ -99,4 +99,10 @@ self.addEventListener('fetch', (event) => {
 });
 
 
+self.addEventListener('message', (event) => {
+  if (event.data && event.data.action === 'skipWaiting') {
+    self.skipWaiting();
+  }
+});
+
 // Any other custom service worker logic can go here.

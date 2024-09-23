@@ -58,7 +58,7 @@ function Input({ addedUsers, setAddedUsers }) {
         <span> Testing the PWA</span>
         <div style={{}}>
           <div style={{ display: "flex ", justifyItems: "center", marginTop:'12px' }}>
-            <label htmlFor="name">Enter your Name Here:</label>
+            <label htmlFor="name">Enter your Name :</label>
             <input
               type="text"
               onChange={(e) => handleOnChange(e)}
