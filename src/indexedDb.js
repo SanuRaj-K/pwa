@@ -1,22 +1,55 @@
-import { openDB } from 'idb';
+import toast from 'react-hot-toast';
 
-const dbPromise = openDB('post-requests', 1, {
-  upgrade(db) {
-    db.createObjectStore('requests', { keyPath: 'id', autoIncrement: true });
-  },
-});
+// Function to store request in IndexedDB/localStorage
+const storeRequestOffline = async (url, requestBody) => {
+  const storedRequests = JSON.parse(localStorage.getItem('offlineRequests')) || [];
+  storedRequests.push({ url, requestBody });
+  localStorage.setItem('offlineRequests', JSON.stringify(storedRequests));
+  toast('You are offline! Request stored.');
+};
 
-export async function savePostRequest(data) {
-  const db = await dbPromise;
-  await db.add('requests', { data });
-}
+// Function to send stored requests when online
+const sendStoredRequests = async () => {
+  const storedRequests = JSON.parse(localStorage.getItem('offlineRequests')) || [];
+  
+  for (const req of storedRequests) {
+    try {
+      await fetch(req.url, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(req.requestBody),
+      });
+      toast.success('Request sent successfully!');
+    } catch (error) {
+      toast.error('Failed to send request.');
+    }
+  }
+  
+  // Clear stored requests after sending
+  localStorage.removeItem('offlineRequests');
+};
 
-export async function getAllPostRequests() {
-  const db = await dbPromise;
-  return await db.getAll('requests');
-}
+// Function to handle POST requests
+const makePostRequest = async (url, requestBody) => {
+  if (navigator.onLine) {
+    try {
+      await fetch(url, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(requestBody),
+      });
+      toast.success('Request sent successfully!');
+    } catch (error) {
+      toast.error('Failed to send request.');
+    }
+  } else {
+    storeRequestOffline(url, requestBody);
+  }
+};
 
-export async function clearPostRequests() {
-  const db = await dbPromise;
-  await db.clear('requests');
-}
+// Event listener for coming back online
+window.addEventListener('online', sendStoredRequests);
