@@ -64,31 +64,27 @@ function registerValidSW(swUrl, config) {
         installingWorker.onstatechange = () => {
           if (installingWorker.state === 'installed') {
             if (navigator.serviceWorker.controller) {
-              // At this point, the updated precached content has been fetched,
-              // but the previous service worker will still serve the older
-              // content until all client tabs are closed.
-              console.log(
-                'New content is available and will be used when all ' +
-                  'tabs for this page are closed. See https://cra.link/PWA.'
-              );
+              // At this point, the new service worker is installed.
+              console.log('New content is available; will automatically reload the page.');
+
+              // Option 1: Reload the page automatically.
               window.location.reload();
 
-            
-
-              // Execute callback
-              if (config && config.onUpdate) {
-                config.onUpdate(registration);
-              }
+              // Option 2: If you want to prompt the user instead, use this:
+              // toast('New content available! Refresh to update.', {
+              //   onClick: () => window.location.reload(),
+              // });
             } else {
               // At this point, everything has been precached.
-              // It's the perfect time to display a
-              // "Content is cached for offline use." message.
               console.log('Content is cached for offline use.');
+            }
 
-              // Execute callback
-              if (config && config.onSuccess) {
-                config.onSuccess(registration);
-              }
+            // Skip waiting to immediately activate the new service worker
+            installingWorker.postMessage({ action: 'skipWaiting' });
+
+            // Optionally, execute callback for onSuccess (if provided)
+            if (config && config.onSuccess) {
+              config.onSuccess(registration);
             }
           }
         };
@@ -98,6 +94,18 @@ function registerValidSW(swUrl, config) {
       console.error('Error during service worker registration:', error);
     });
 }
+
+// Force an update of the service worker (optional utility function)
+export function forceSWupdate() {
+  if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.ready.then((registration) => {
+      registration.update().then(() => {
+        console.log('Service Worker updated.');
+      });
+    });
+  }
+}
+
 
 function checkValidServiceWorker(swUrl, config) {
   // Check if the service worker can be found. If it can't reload the page.
@@ -138,13 +146,13 @@ export function unregister() {
       });
   }
 }
-export function forceSWupdate() {
-  if ('serviceWorker' in navigator) {
-      navigator.serviceWorker.ready.then(registration => {
-          registration.update().then(() => {
+// export function forceSWupdate() {
+//   if ('serviceWorker' in navigator) {
+//       navigator.serviceWorker.ready.then(registration => {
+//           registration.update().then(() => {
 
-          });
-      });
-  }
-}
+//           });
+//       });
+//   }
+// }
 
