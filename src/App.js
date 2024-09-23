@@ -6,13 +6,7 @@ import { Route, Routes } from "react-router-dom";
 import List from "./components/List";
 import Input from "./components/Input";
 function App() {
-  if (navigator.serviceWorker.controller) {
-  const userConfirmed = window.confirm('A new version of the app is available. Would you like to refresh?');
-  if (userConfirmed) {
-    window.location.reload();
-  }
-}
-
+  
   const [addedUsers, setAddedUsers] = useState([]);
   const sendStoredRequests = async () => {
     const storedRequests =
