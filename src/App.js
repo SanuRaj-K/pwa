@@ -36,6 +36,29 @@ function App() {
     storedRequests.push({ url, requestBody });
     localStorage.setItem("offlineRequests", JSON.stringify(storedRequests));
   };
+  const sendStoredRequests = async () => {
+    const toastIdForStoredRequests= toast.loading('sending sotred requestes')
+    const storedRequests =
+      JSON.parse(localStorage.getItem("offlineRequests")) || [];
+
+    for (const req of storedRequests) {
+      try {
+        await fetch(req.url, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(req.requestBody),
+        });
+        toast.success("Request sent successfully!", {toastIdForStoredRequests});
+      } catch (error) {
+        toast.error("Failed to send request.",{id:sendStoredRequests});
+      }
+    }
+
+    localStorage.removeItem("offlineRequests");
+  };
+  window.addEventListener("online", sendStoredRequests);
 
   return (
     <div className="App">
