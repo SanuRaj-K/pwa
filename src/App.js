@@ -1,41 +1,12 @@
-import React from "react";
+import React, {  useState } from "react";
 import "./App.css";
 import toast, { Toaster } from "react-hot-toast";
 import axios from "axios";
-
+import { Route, Routes } from "react-router-dom";
+import List from "./components/List";
+import Input from "./components/Input";
 function App() {
-  const data = {
-    name: "sanu",
-    job: "developer",
-  };
-  const url = "https://reqres.in/api/users";
-
-  const handlePost = () => {
-    const toastId = toast.loading("posting...");
-    if (navigator.onLine) {
-      axios
-        .post(url, {
-          data,
-        })
-        .then((res) => {
-          toast.success("Success", { id: toastId });
-          console.log(res.data);
-        })
-        .catch((err) => {
-          toast.error("something went wrong", { id: toastId });
-          console.log(err);
-        });
-    } else {
-      storeRequestOffline(url, data);
-      toast.error("You are offline! Request stored.", { id: toastId });
-    }
-  };
-  const storeRequestOffline = async (url, requestBody) => {
-    const storedRequests =
-      JSON.parse(localStorage.getItem("offlineRequests")) || [];
-    storedRequests.push({ url, requestBody });
-    localStorage.setItem("offlineRequests", JSON.stringify(storedRequests));
-  };
+  const [addedUsers, setAddedUsers] = useState([]);
   const sendStoredRequests = async () => {
     const toastIdForStoredRequests = toast.loading("sending sotred requestes");
     const storedRequests =
@@ -60,28 +31,21 @@ function App() {
 
     localStorage.removeItem("offlineRequests");
   };
+
   window.addEventListener("online", sendStoredRequests);
 
   return (
     <div className="App">
       <Toaster />
-      <div
-        style={{
-          display: "flex",
-          flexDirection: "column",
-          alignItems: "center",
-        }}
-      >
-        <span> Testing the PWA</span>
-        <div>
-          <button
-            style={{ display: "block", marginTop: "50px" }}
-            onClick={handlePost}
-          >
-            Make a post
-          </button>
-        </div>
-      </div>
+      <Routes>
+        <Route
+          path="/"
+          element={
+            <Input setAddedUsers={setAddedUsers} addedUsers={addedUsers} />
+          }
+        />
+        <Route path="/list" element={<List addedUsers={addedUsers} />} />
+      </Routes>
     </div>
   );
 }
