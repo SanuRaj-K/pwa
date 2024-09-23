@@ -58,7 +58,7 @@ function Input({ addedUsers, setAddedUsers }) {
         <span> Testing the PWA</span>
         <div style={{}}>
           <div style={{ display: "flex ", justifyItems: "center", marginTop:'12px' }}>
-            <label htmlFor="name">Enter your Username:</label>
+            <label htmlFor="name">Enter your Name:</label>
             <input
               type="text"
               onChange={(e) => handleOnChange(e)}
@@ -71,7 +71,7 @@ function Input({ addedUsers, setAddedUsers }) {
               style={{
                 marginLeft: "10px",
                 color:'white',
-                backgroundColor: "red",
+                backgroundColor: "blue",
                 cursor: "pointer",
                 padding: " 3px 10px",
               }}

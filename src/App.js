@@ -8,9 +8,13 @@ import Input from "./components/Input";
 function App() {
   const [addedUsers, setAddedUsers] = useState([]);
   const sendStoredRequests = async () => {
-    const toastIdForStoredRequests = toast.loading("sending stored requestes");
     const storedRequests =
       JSON.parse(localStorage.getItem("offlineRequests")) || [];
+    if (storedRequests.length === 0) {
+      return;
+    }
+    const toastIdForStoredRequests = toast.loading("sending stored requestes");
+
     for (const req of storedRequests) {
       const data = req.requestBody;
 
@@ -30,6 +34,9 @@ function App() {
     localStorage.removeItem("offlineRequests");
   };
   useEffect(() => {
+    if(navigator.onLine){
+      sendStoredRequests()
+    }
     const handleOnline = () => {
       sendStoredRequests();
     };
