@@ -42,19 +42,19 @@ function App() {
       JSON.parse(localStorage.getItem("offlineRequests")) || [];
 
     for (const req of storedRequests) {
+      const data = JSON.stringify(req.requestBody);
+
       try {
-        await fetch(req.url, {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify(req.requestBody),
+        await axios.post(req.url, {
+          data,
         });
         toast.success("Request sent successfully!", {
           id: toastIdForStoredRequests,
         });
       } catch (error) {
-        toast.error("Failed to send request.", { id: sendStoredRequests });
+        toast.error("Failed to send request.", {
+          id: toastIdForStoredRequests,
+        });
       }
     }
 
