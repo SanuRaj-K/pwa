@@ -70,6 +70,7 @@ function Input({ addedUsers, setAddedUsers }) {
               onClick={handlePost}
               style={{
                 marginLeft: "10px",
+                borderRadius:'8px',
                 color:'white',
                 backgroundColor: "black",
                 cursor: "pointer",
