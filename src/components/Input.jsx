@@ -71,7 +71,7 @@ function Input({ addedUsers, setAddedUsers }) {
               style={{
                 marginLeft: "10px",
                 color:'white',
-                backgroundColor: "blue",
+                backgroundColor: "black",
                 cursor: "pointer",
                 padding: " 3px 10px",
               }}
