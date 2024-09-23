@@ -1,6 +1,8 @@
 // This optional code is used to register a service worker.
 // register() is not called by default.
 
+import toast from "react-hot-toast";
+
 // This lets the app load faster on subsequent visits in production, and gives
 // it offline capabilities. However, it also means that developers (and users)
 // will only see deployed updates on subsequent visits to a page, after all the
@@ -66,7 +68,16 @@ function registerValidSW(swUrl, config) {
             if (navigator.serviceWorker.controller) {
               // Log that new content is available
               console.log('New content is available; reloading now...');
-
+              toast('New version available! Click to refresh.', {
+                duration: 5000,
+                onClick: () => {
+                  window.location.reload();
+                },
+                style: {
+                  background: '#333',
+                  color: '#fff',
+                },
+              });
               // Post message to skip waiting and activate new service worker
               installingWorker.postMessage({ action: 'skipWaiting' });
 
