@@ -1,4 +1,4 @@
-import React, {  useState } from "react";
+import React, { useEffect, useState } from "react";
 import "./App.css";
 import toast, { Toaster } from "react-hot-toast";
 import axios from "axios";
@@ -8,22 +8,18 @@ import Input from "./components/Input";
 function App() {
   const [addedUsers, setAddedUsers] = useState([]);
   const sendStoredRequests = async () => {
-    const toastIdForStoredRequests = toast.loading("sending sotred requestes");
+    const toastIdForStoredRequests = toast.loading("sending stored requestes");
     const storedRequests =
       JSON.parse(localStorage.getItem("offlineRequests")) || [];
     for (const req of storedRequests) {
-      const data = JSON.stringify(req.requestBody);
-      
-      
+      const data = req.requestBody;
 
       try {
-        await axios.post(req.url, {
-          data,
-        });
-        toast.success("Request sent successfully!", { 
+        await axios.post(req.url, data);
+        toast.success("Request sent successfully!", {
           id: toastIdForStoredRequests,
         });
-        setAddedUsers((prev) => [...prev, data.name]);
+        setAddedUsers((prev) => [...prev, data]);
       } catch (error) {
         toast.error("Failed to send request.", {
           id: toastIdForStoredRequests,
@@ -33,8 +29,19 @@ function App() {
 
     localStorage.removeItem("offlineRequests");
   };
+  useEffect(() => {
+    const handleOnline = () => {
+      sendStoredRequests();
+    };
 
-  window.addEventListener("online", sendStoredRequests);
+    window.addEventListener("online", handleOnline);
+
+    return () => {
+      window.removeEventListener("online", handleOnline);
+    };
+  }, []);
+
+  // window.addEventListener("online", sendStoredRequests);
 
   return (
     <div className="App">

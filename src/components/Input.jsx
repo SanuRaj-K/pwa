@@ -9,10 +9,7 @@ function Input({ addedUsers, setAddedUsers }) {
     setValue(value);
   };
 
-  const data = {
-    name: value,
-    job: "developer",
-  };
+   
   const url = "https://reqres.in/api/users";
 
   const handlePost = () => {
@@ -25,7 +22,7 @@ function Input({ addedUsers, setAddedUsers }) {
       if (navigator.onLine) {
         axios
           .post(url, {
-            data,
+            value,
           })
           .then((res) => {
             toast.success("Success", { id: toastId });
@@ -37,7 +34,7 @@ function Input({ addedUsers, setAddedUsers }) {
             console.log(err);
           });
       } else {
-        storeRequestOffline(url, data);
+        storeRequestOffline(url, value);
         toast.error("You are offline! Request stored.", { id: toastId });
       }
     }
