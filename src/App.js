@@ -8,12 +8,13 @@ function App() {
     name: "sanu",
     job: "developer",
   };
+  const url = "https://reqres.in/api/users";
 
   const handlePost = () => {
     const toastId = toast.loading("posting...");
     if (navigator.onLine) {
       axios
-        .post("https://reqres.in/api/users", {
+        .post(url, {
           data,
         })
         .then((res) => {
@@ -24,7 +25,16 @@ function App() {
           toast.error("something went wrong", { id: toastId });
           console.log(err);
         });
+    } else {
+      storeRequestOffline(url, data);
+      toast.error("You are offline! Request stored.", { id: toastId });
     }
+  };
+  const storeRequestOffline = async (url, requestBody) => {
+    const storedRequests =
+      JSON.parse(localStorage.getItem("offlineRequests")) || [];
+    storedRequests.push({ url, requestBody });
+    localStorage.setItem("offlineRequests", JSON.stringify(storedRequests));
   };
 
   return (
