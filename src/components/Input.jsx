@@ -18,23 +18,28 @@ function Input({ addedUsers, setAddedUsers }) {
   const handlePost = () => {
     console.log(value);
 
-    const toastId = toast.loading("posting...");
-    if (navigator.onLine) {
-      axios
-        .post(url, {
-          data,
-        })
-        .then((res) => {
-          toast.success("Success", { id: toastId });
-          setAddedUsers((prev) => [...prev, value]);
-        })
-        .catch((err) => {
-          toast.error("something went wrong", { id: toastId });
-          console.log(err);
-        });
+    if (value.length < 1) {
+      toast.error("enter your name");
     } else {
-      storeRequestOffline(url, data);
-      toast.error("You are offline! Request stored.", { id: toastId });
+      const toastId = toast.loading("posting...");
+      if (navigator.onLine) {
+        axios
+          .post(url, {
+            data,
+          })
+          .then((res) => {
+            toast.success("Success", { id: toastId });
+            setAddedUsers((prev) => [...prev, value]);
+            setValue("");
+          })
+          .catch((err) => {
+            toast.error("something went wrong", { id: toastId });
+            console.log(err);
+          });
+      } else {
+        storeRequestOffline(url, data);
+        toast.error("You are offline! Request stored.", { id: toastId });
+      }
     }
   };
   const storeRequestOffline = async (url, requestBody) => {
@@ -61,6 +66,7 @@ function Input({ addedUsers, setAddedUsers }) {
               type="text"
               onChange={(e) => handleOnChange(e)}
               name=""
+              value={value}
               id="name"
             />
             <div

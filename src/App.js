@@ -11,17 +11,19 @@ function App() {
     const toastIdForStoredRequests = toast.loading("sending sotred requestes");
     const storedRequests =
       JSON.parse(localStorage.getItem("offlineRequests")) || [];
-
     for (const req of storedRequests) {
       const data = JSON.stringify(req.requestBody);
+      
+      
 
       try {
         await axios.post(req.url, {
           data,
         });
-        toast.success("Request sent successfully!", {
+        toast.success("Request sent successfully!", { 
           id: toastIdForStoredRequests,
         });
+        setAddedUsers((prev) => [...prev, data.name]);
       } catch (error) {
         toast.error("Failed to send request.", {
           id: toastIdForStoredRequests,
